@@ -1,7 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { execSync } from 'node:child_process';
-import { rmSync } from 'node:fs';
+import { mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import request from 'supertest';
 import { App } from 'supertest/types';
@@ -48,7 +48,9 @@ describe('MiniSense API (e2e)', () => {
 
   beforeEach(async () => {
     const databaseName = `test-${Date.now()}-${Math.random().toString(16).slice(2)}.sqlite`;
-    databaseFile = join(process.cwd(), 'data', databaseName);
+    const databaseDirectory = join(process.cwd(), 'data');
+    mkdirSync(databaseDirectory, { recursive: true });
+    databaseFile = join(databaseDirectory, databaseName);
     process.env.DATABASE_URL = `file:../data/${databaseName}`;
 
     execSync(
@@ -57,7 +59,7 @@ describe('MiniSense API (e2e)', () => {
         '--file prisma/migrations/20260610000000_init/migration.sql',
         '--schema prisma/schema.prisma',
       ].join(' '),
-      { env: process.env, stdio: 'ignore' },
+      { env: process.env, stdio: 'inherit' },
     );
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
