@@ -1,12 +1,43 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { ApiOkResponse, ApiOperation, ApiProperty } from '@nestjs/swagger';
+
+class ApiRootResponseDto {
+  @ApiProperty({ example: 'MiniSense API' })
+  name: string;
+
+  @ApiProperty({ example: 'ok' })
+  status: string;
+
+  @ApiProperty({ example: '/docs' })
+  docs: string;
+
+  @ApiProperty({
+    example: [
+      '/measurement-units',
+      '/users/1/devices',
+      '/devices/{deviceKey}',
+      '/streams/{streamKey}',
+    ],
+  })
+  endpoints: string[];
+}
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
-
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @ApiOperation({ summary: 'Consultar informacoes basicas da API' })
+  @ApiOkResponse({ type: ApiRootResponseDto })
+  getRoot(): ApiRootResponseDto {
+    return {
+      name: 'MiniSense API',
+      status: 'ok',
+      docs: '/docs',
+      endpoints: [
+        '/measurement-units',
+        '/users/1/devices',
+        '/devices/{deviceKey}',
+        '/streams/{streamKey}',
+      ],
+    };
   }
 }
