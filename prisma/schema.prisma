@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      Int            @id @default(autoincrement())
+  name    String
+  devices SensorDevice[]
+
+  @@map("users")
+}
+
+model MeasurementUnit {
+  id          Int          @id @default(autoincrement())
+  symbol      String
+  description String
+  streams     DataStream[]
+
+  @@map("measurement_units")
+}
+
+model SensorDevice {
+  id          Int          @id @default(autoincrement())
+  key         String       @unique
+  label       String
+  description String
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
+  streams     DataStream[]
+
+  @@map("sensor_devices")
+}
+
+model DataStream {
+  id           Int             @id @default(autoincrement())
+  key          String          @unique
+  label        String
+  enabled      Boolean         @default(true)
+  unitId       Int
+  deviceId     Int
+  unit         MeasurementUnit @relation(fields: [unitId], references: [id])
+  device       SensorDevice    @relation(fields: [deviceId], references: [id])
+  measurements SensorData[]
+
+  @@map("data_streams")
+}
+
+model SensorData {
+  id        Int        @id @default(autoincrement())
+  timestamp Int
+  value     Float
+  unitId    Int
+  streamId  Int
+  stream    DataStream @relation(fields: [streamId], references: [id])
+
+  @@index([timestamp])
+  @@map("sensor_data")
+}
