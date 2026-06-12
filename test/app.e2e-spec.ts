@@ -100,23 +100,23 @@ describe('MiniSense API (e2e)', () => {
         expect(units).toHaveLength(5);
         expect(units[0]).toMatchObject({
           id: 1,
-          symbol: 'ºC',
+          symbol: '°C',
           description: 'Celsius',
         });
         expect(units[1]).toMatchObject({
           id: 2,
           symbol: 'mg/m³',
-          description: 'Megagram per cubic metre',
+          description: 'Miligrama por metro cúbico',
         });
         expect(units[2]).toMatchObject({
           id: 3,
-          symbol: 'hPA',
-          description: 'hectopasca',
+          symbol: 'hPa',
+          description: 'Hectopascal',
         });
       });
   });
 
-  it('runs the device, stream and measurement flow', async () => {
+  it('executa o fluxo de dispositivo, stream e medição', async () => {
     const deviceResponse = await request(app.getHttpServer())
       .post('/users/1/devices')
       .send({
@@ -167,14 +167,14 @@ describe('MiniSense API (e2e)', () => {
       });
   });
 
-  it('returns 400 for invalid payloads', () => {
+  it('retorna 400 para payloads inválidos', () => {
     return request(app.getHttpServer())
       .post('/users/1/devices')
       .send({ description: 'missing label', unexpected: true })
       .expect(400);
   });
 
-  it('returns 404 for unknown resources', async () => {
+  it('retorna 404 para recursos desconhecidos', async () => {
     await request(app.getHttpServer()).get('/users/999/devices').expect(404);
     await request(app.getHttpServer()).get('/devices/unknown').expect(404);
   });

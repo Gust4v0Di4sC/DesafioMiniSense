@@ -13,11 +13,11 @@ export class DatabaseSeedService implements OnApplicationBootstrap {
     });
 
     const units = [
-      { id: 1, symbol: '\u00baC', description: 'Celsius' },
-      { id: 2, symbol: 'mg/m\u00b3', description: 'Megagram per cubic metre' },
-      { id: 3, symbol: 'hPA', description: 'hectopasca' },
+      { id: 1, symbol: '°C', description: 'Celsius' },
+      { id: 2, symbol: 'mg/m³', description: 'Miligrama por metro cúbico' },
+      { id: 3, symbol: 'hPa', description: 'Hectopascal' },
       { id: 4, symbol: 'lux', description: 'Lux' },
-      { id: 5, symbol: '%', description: 'Percent' },
+      { id: 5, symbol: '%', description: 'Porcentagem' },
     ];
 
     for (const unit of units) {

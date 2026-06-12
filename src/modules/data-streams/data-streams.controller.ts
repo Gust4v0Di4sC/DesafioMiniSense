@@ -41,7 +41,7 @@ export class DataStreamsController {
   }
 
   @Post('streams/:streamKey/measurements')
-  @ApiOperation({ summary: 'Publicar medicao em uma stream' })
+  @ApiOperation({ summary: 'Publicar medição em uma stream' })
   @ApiParam({ name: 'streamKey' })
   @ApiCreatedResponse({ type: MeasurementResponseDto })
   publishMeasurement(

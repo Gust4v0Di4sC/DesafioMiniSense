@@ -21,7 +21,7 @@ describe('SensorDevicesService', () => {
     service = new SensorDevicesService(repository as SensorDevicesRepository);
   });
 
-  it('registers a device for an existing user', async () => {
+  it('registra um dispositivo para um usuário existente', async () => {
     repository.userExists.mockResolvedValue(true);
     repository.create.mockResolvedValue({
       id: 1,
@@ -46,7 +46,7 @@ describe('SensorDevicesService', () => {
     expect(device.key).toHaveLength(32);
   });
 
-  it('rejects device registration for an unknown user', async () => {
+  it('rejeita cadastro de dispositivo para usuário desconhecido', async () => {
     repository.userExists.mockResolvedValue(false);
 
     await expect(
@@ -54,7 +54,7 @@ describe('SensorDevicesService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('returns device details or 404 by key', async () => {
+  it('retorna detalhes do dispositivo ou 404 por key', async () => {
     repository.findByKey.mockResolvedValueOnce(null);
 
     await expect(service.getByKey('unknown')).rejects.toBeInstanceOf(

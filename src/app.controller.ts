@@ -25,7 +25,7 @@ class ApiRootResponseDto {
 @Controller()
 export class AppController {
   @Get()
-  @ApiOperation({ summary: 'Consultar informacoes basicas da API' })
+  @ApiOperation({ summary: 'Consultar informações básicas da API' })
   @ApiOkResponse({ type: ApiRootResponseDto })
   getRoot(): ApiRootResponseDto {
     return {

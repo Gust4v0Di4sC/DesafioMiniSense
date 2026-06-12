@@ -18,7 +18,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('MiniSense API')
     .setDescription(
-      'REST API para gerenciamento de dispositivos IoT e streams.',
+      'API REST para gerenciamento de dispositivos IoT e streams de dados.',
     )
     .setVersion('1.0')
     .addTag('measurement-units')
@@ -37,6 +37,6 @@ async function bootstrap() {
 
   const baseUrl = `http://localhost:${port}`;
   logger.log(`API rodando em: ${baseUrl}`);
-  logger.log(`Swagger docs: ${baseUrl}/docs`);
+  logger.log(`Documentação Swagger: ${baseUrl}/docs`);
 }
 void bootstrap();

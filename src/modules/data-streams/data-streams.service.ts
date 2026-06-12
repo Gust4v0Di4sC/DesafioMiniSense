@@ -24,11 +24,11 @@ export class DataStreamsService {
     const deviceId = await this.repository.findDeviceIdByKey(deviceKey);
 
     if (!deviceId) {
-      throw new NotFoundException('Sensor device not found');
+      throw new NotFoundException('Dispositivo sensor não encontrado');
     }
 
     if (!(await this.repository.measurementUnitExists(input.unitId))) {
-      throw new NotFoundException('Measurement unit not found');
+      throw new NotFoundException('Unidade de medida não encontrada');
     }
 
     return this.repository.create({
@@ -61,7 +61,7 @@ export class DataStreamsService {
     const stream = await this.findRequiredStream(streamKey);
 
     if (!stream.enabled) {
-      throw new BadRequestException('Data stream is disabled');
+      throw new BadRequestException('Stream de dados está desabilitada');
     }
 
     return this.repository.createMeasurement({
@@ -78,7 +78,7 @@ export class DataStreamsService {
     const stream = await this.repository.findByKey(streamKey);
 
     if (!stream) {
-      throw new NotFoundException('Data stream not found');
+      throw new NotFoundException('Stream de dados não encontrada');
     }
 
     return stream;

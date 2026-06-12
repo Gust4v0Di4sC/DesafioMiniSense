@@ -34,7 +34,7 @@ export class SensorDevicesService {
     const device = await this.repository.findByKey(deviceKey);
 
     if (!device) {
-      throw new NotFoundException('Sensor device not found');
+      throw new NotFoundException('Dispositivo sensor não encontrado');
     }
 
     return device;
@@ -42,7 +42,7 @@ export class SensorDevicesService {
 
   private async ensureUserExists(userId: number): Promise<void> {
     if (!(await this.repository.userExists(userId))) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Usuário não encontrado');
     }
   }
 }

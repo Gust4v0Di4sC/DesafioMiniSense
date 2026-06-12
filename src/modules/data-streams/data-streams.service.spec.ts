@@ -28,7 +28,7 @@ describe('DataStreamsService', () => {
     service = new DataStreamsService(repository as DataStreamsRepository);
   });
 
-  it('registers a stream with a valid device and unit', async () => {
+  it('registra uma stream com dispositivo e unidade válidos', async () => {
     repository.findDeviceIdByKey.mockResolvedValue(2);
     repository.measurementUnitExists.mockResolvedValue(true);
     repository.create.mockResolvedValue({
@@ -56,7 +56,7 @@ describe('DataStreamsService', () => {
     expect(stream.measurementCount).toBe(0);
   });
 
-  it('rejects stream registration for invalid device or unit', async () => {
+  it('rejeita cadastro de stream com dispositivo ou unidade inválidos', async () => {
     repository.findDeviceIdByKey.mockResolvedValueOnce(null);
 
     await expect(
@@ -71,7 +71,7 @@ describe('DataStreamsService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('publishes a measurement copying the stream unit', async () => {
+  it('publica uma medição copiando a unidade da stream', async () => {
     repository.findByKey.mockResolvedValue({
       id: 1,
       key: 'stream-key',
@@ -96,7 +96,7 @@ describe('DataStreamsService', () => {
     ).resolves.toMatchObject({ unitId: 1 });
   });
 
-  it('rejects measurements for disabled streams', async () => {
+  it('rejeita medições para streams desabilitadas', async () => {
     repository.findByKey.mockResolvedValue({
       id: 1,
       key: 'stream-key',

@@ -4,7 +4,7 @@ export class MeasurementUnitResponseDto {
   @ApiProperty({ example: 1 })
   id!: number;
 
-  @ApiProperty({ example: '\u00baC' })
+  @ApiProperty({ example: '°C' })
   symbol!: string;
 
   @ApiProperty({ example: 'Celsius' })
