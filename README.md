@@ -1,15 +1,15 @@
 # MiniSense API
 
-API RESTful para gerenciamento de dispositivos IoT, streams de dados e medicoes
+API RESTful para gerenciamento de dispositivos IoT, streams de dados e medições
 do desafio MiniSense. O projeto usa NestJS, TypeScript, Prisma ORM, SQLite e
-migrations versionadas.
+migrações versionadas.
 
 ## Resumo da entrega
 
 - API implementada em NestJS com os endpoints pedidos no desafio.
-- Documentacao interativa em Swagger/OpenAPI em `/docs`.
-- Banco local SQLite controlado por Prisma e migration versionada.
-- Testes unitarios e e2e cobrindo os fluxos principais da API.
+- Documentação interativa em Swagger/OpenAPI em `/docs`.
+- Banco local SQLite controlado por Prisma e migração versionada.
+- Testes unitários e e2e cobrindo os fluxos principais da API.
 - Workflow de CI em `.github/workflows/ci.yml`.
 
 ## Requisitos
@@ -17,22 +17,22 @@ migrations versionadas.
 - Node.js 20 ou superior
 - npm
 
-## Instalacao e execucao
+## Instalação e execução
 
-Clone o repositorio e entre na pasta da API:
+Clone o repositório e entre na pasta da API:
 
 ```bash
 git clone <url-do-repositorio>
 cd DesafioMiniSense/minisenseapi
 ```
 
-Instale as dependencias:
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-Configure o banco local. O exemplo abaixo usa o arquivo padrao do projeto no
+Configure o banco local. O exemplo abaixo usa o arquivo padrão do projeto no
 Windows PowerShell:
 
 ```powershell
@@ -49,39 +49,39 @@ npm run db:init
 npm run start:dev
 ```
 
-A API sobe por padrao em `http://localhost:3000` e o terminal mostra os links:
+A API sobe por padrão em `http://localhost:3000` e o terminal mostra os links:
 
 ```text
 API rodando em: http://localhost:3000
-Swagger docs: http://localhost:3000/docs
+Documentação Swagger: http://localhost:3000/docs
 ```
 
-Para desenvolvimento, use qualquer uma das opcoes abaixo:
+Para desenvolvimento, use qualquer uma das opções abaixo:
 
 ```bash
 npm run start:dev
 npm run start dev
 ```
 
-Documentacao OpenAPI/Swagger:
+Documentação OpenAPI/Swagger:
 
 ```text
 http://localhost:3000/docs
 ```
 
-Tambem e possivel consultar o contrato OpenAPI em JSON:
+Também é possível consultar o contrato OpenAPI em JSON:
 
 ```text
 http://localhost:3000/docs-json
 ```
 
-Arquivo de banco local padrao:
+Arquivo de banco local padrão:
 
 ```text
 data/minisense.sqlite
 ```
 
-Exemplo de variavel de ambiente tambem esta em `.env.example`.
+Um exemplo de variável de ambiente também está em `.env.example`.
 
 ## Build e testes
 
@@ -112,23 +112,23 @@ npm run prisma:deploy
 npm run prisma:studio
 ```
 
-As migrations ficam em `prisma/migrations`.
+As migrações ficam em `prisma/migrations`.
 
-Observacao: `npm run db:init` aplica a migration SQL versionada. O script
-`npm run prisma:deploy` tambem esta disponivel para ambientes onde o Prisma
+Observação: `npm run db:init` aplica a migração SQL versionada. O script
+`npm run prisma:deploy` também está disponível para ambientes onde o Prisma
 Migrate esteja funcionando normalmente.
 
 ## Seed inicial
 
-Na inicializacao, a aplicacao cria via upsert:
+Na inicialização, a aplicação cria via upsert:
 
-- Usuario padrao: `id = 1`, `name = Default User`
+- Usuário padrão: `id = 1`, `name = Default User`
 - Unidades de medida:
-  - `1`: `\u00baC` - Celsius
-  - `2`: `mg/m\u00b3` - Megagram per cubic metre
-  - `3`: `hPA` - hectopasca
+  - `1`: `°C` - Celsius
+  - `2`: `mg/m³` - Miligrama por metro cúbico
+  - `3`: `hPa` - Hectopascal
   - `4`: `lux` - Lux
-  - `5`: `%` - Percent
+  - `5`: `%` - Porcentagem
 
 ## Estrutura do projeto
 
@@ -142,7 +142,7 @@ src/
   modules/
     measurement-units/    GET /measurement-units
     sensor-devices/       cadastro e consulta de dispositivos
-    data-streams/         cadastro de streams e publicacao de medicoes
+    data-streams/         cadastro de streams e publicação de medições
 ```
 
 Cada feature segue um fluxo NestJS direto:
@@ -151,21 +151,21 @@ Cada feature segue um fluxo NestJS direto:
 Controller -> Service -> Repository -> Prisma
 ```
 
-O controller cuida do contrato HTTP, o service concentra regras de aplicacao e o
-repository isola as consultas Prisma. Essa separacao atende SOLID sem criar
-interfaces, tokens e mappers extras que nao trazem ganho real para este desafio.
+O controller cuida do contrato HTTP, o service concentra regras de aplicação e o
+repository isola as consultas Prisma. Essa separação atende SOLID sem criar
+interfaces, tokens e mappers extras que não trazem ganho real para este desafio.
 
 ## Endpoints
 
-| Metodo | Rota | Descricao |
+| Método | Rota | Descrição |
 | --- | --- | --- |
 | `GET` | `/measurement-units` | Consulta as unidades de medida fixas. |
-| `GET` | `/users/:userId/devices` | Consulta os dispositivos de um usuario. |
-| `GET` | `/devices/:deviceKey` | Consulta um dispositivo por key, incluindo as 5 medicoes mais recentes de cada stream. |
-| `GET` | `/streams/:streamKey` | Consulta uma stream por key, incluindo todas as suas medicoes. |
-| `POST` | `/users/:userId/devices` | Registra um dispositivo para um usuario. |
+| `GET` | `/users/:userId/devices` | Consulta os dispositivos de um usuário. |
+| `GET` | `/devices/:deviceKey` | Consulta um dispositivo por key, incluindo as 5 medições mais recentes de cada stream. |
+| `GET` | `/streams/:streamKey` | Consulta uma stream por key, incluindo todas as suas medições. |
+| `POST` | `/users/:userId/devices` | Registra um dispositivo para um usuário. |
 | `POST` | `/devices/:deviceKey/streams` | Registra uma stream para um dispositivo. |
-| `POST` | `/streams/:streamKey/measurements` | Publica uma medicao em uma stream. |
+| `POST` | `/streams/:streamKey/measurements` | Publica uma medição em uma stream. |
 
 ### Consultar unidades de medida
 
@@ -177,15 +177,15 @@ Resposta:
 
 ```json
 [
-  { "id": 1, "symbol": "\u00baC", "description": "Celsius" },
-  { "id": 2, "symbol": "mg/m\u00b3", "description": "Megagram per cubic metre" },
-  { "id": 3, "symbol": "hPA", "description": "hectopasca" },
+  { "id": 1, "symbol": "°C", "description": "Celsius" },
+  { "id": 2, "symbol": "mg/m³", "description": "Miligrama por metro cúbico" },
+  { "id": 3, "symbol": "hPa", "description": "Hectopascal" },
   { "id": 4, "symbol": "lux", "description": "Lux" },
-  { "id": 5, "symbol": "%", "description": "Percent" }
+  { "id": 5, "symbol": "%", "description": "Porcentagem" }
 ]
 ```
 
-### Consultar dispositivos de um usuario
+### Consultar dispositivos de um usuário
 
 ```http
 GET /users/1/devices
@@ -221,7 +221,7 @@ POST /users/1/devices
 Content-Type: application/json
 ```
 
-Request:
+Requisição:
 
 ```json
 {
@@ -235,7 +235,7 @@ Resposta:
 ```json
 {
   "id": 2,
-  "key": "8961bd9a4d1e439ebf3b86af5b9d5c1f",
+  "key": "27b26e48cd674cc38ec45808cf48fa07",
   "label": "Kitchen's freezer sensor (Arduino)",
   "description": "Kitchen's freezer sensor (Arduino)"
 }
@@ -247,7 +247,7 @@ Resposta:
 GET /devices/{deviceKey}
 ```
 
-A consulta individual retorna as 5 medicoes mais recentes de cada stream.
+A consulta individual retorna as 5 medições mais recentes de cada stream.
 
 Resposta:
 
@@ -281,7 +281,7 @@ POST /devices/{deviceKey}/streams
 Content-Type: application/json
 ```
 
-Request:
+Requisição:
 
 ```json
 {
@@ -309,7 +309,7 @@ Resposta:
 GET /streams/{streamKey}
 ```
 
-Retorna todas as medicoes da stream, ordenadas da mais recente para a mais
+Retorna todas as medições da stream, ordenadas da mais recente para a mais
 antiga.
 
 Resposta:
@@ -329,14 +329,14 @@ Resposta:
 }
 ```
 
-### Publicar medicao em uma stream
+### Publicar medição em uma stream
 
 ```http
 POST /streams/{streamKey}/measurements
 Content-Type: application/json
 ```
 
-Request:
+Requisição:
 
 ```json
 {
@@ -356,38 +356,38 @@ Resposta:
 }
 ```
 
-## Modelagem do dominio
+## Modelagem do domínio
 
 Entidades principais:
 
-- `User`: proprietario dos dispositivos.
-- `SensorDevice`: dispositivo fisico associado a um usuario. Recebe `id` do
-  banco e `key` hexadecimal gerada pela aplicacao.
+- `User`: proprietário dos dispositivos.
+- `SensorDevice`: dispositivo físico associado a um usuário. Recebe `id` do
+  banco e `key` hexadecimal gerada pela aplicação.
 - `DataStream`: fluxo de dados de um dispositivo, vinculado a uma unidade de
-  medida e habilitado por padrao.
-- `MeasurementUnit`: unidade fixa usada por streams e medicoes.
-- `SensorData`: medicao publicada em uma stream. Armazena `unitId` no momento do
-  recebimento para preservar a unidade historica da leitura.
+  medida e habilitado por padrão.
+- `MeasurementUnit`: unidade fixa usada por streams e medições.
+- `SensorData`: medição publicada em uma stream. Armazena `unitId` no momento do
+  recebimento para preservar a unidade histórica da leitura.
 
-Decisoes de implementacao:
+Decisões de implementação:
 
-- O usuario e informado por rota (`/users/:userId/devices`) porque o desafio nao
-  exige autenticacao.
+- O usuário é informado por rota (`/users/:userId/devices`) porque o desafio não
+  exige autenticação.
 - O schema relacional fica em `prisma/schema.prisma`.
-- A migration inicial fica em `prisma/migrations/20260610000000_init`.
-- `measurementCount` e calculado via `_count` do Prisma.
-- `GET /devices/:deviceKey` limita as medicoes por stream a 5 itens.
-- `GET /streams/:streamKey` retorna todas as medicoes da stream.
-- Validacao de payloads usa `ValidationPipe` global com `whitelist` e
+- A migração inicial fica em `prisma/migrations/20260610000000_init`.
+- `measurementCount` é calculado via `_count` do Prisma.
+- `GET /devices/:deviceKey` limita as medições por stream a 5 itens.
+- `GET /streams/:streamKey` retorna todas as medições da stream.
+- Validação de payloads usa `ValidationPipe` global com `whitelist` e
   `forbidNonWhitelisted`.
 
-## Organizacao do codigo
+## Organização do código
 
-- Controllers definem rotas HTTP, parametros, bodies e documentacao Swagger.
-- Services concentram regras de aplicacao, validam existencia de entidades e
-  disparam erros HTTP (`404`, `400`) quando necessario.
+- Controllers definem rotas HTTP, parâmetros, bodies e documentação Swagger.
+- Services concentram regras de aplicação, validam existência de entidades e
+  disparam erros HTTP (`404`, `400`) quando necessário.
 - Repositories isolam consultas Prisma e formatam os objetos de resposta.
-- DTOs de entrada usam `class-validator`; DTOs de saida documentam o contrato no
+- DTOs de entrada usam `class-validator`; DTOs de saída documentam o contrato no
   Swagger.
-- `DatabaseSeedService` cria o usuario padrao e as unidades de medida fixas na
-  inicializacao.
+- `DatabaseSeedService` cria o usuário padrão e as unidades de medida fixas na
+  inicialização.
