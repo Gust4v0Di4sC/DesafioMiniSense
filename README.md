@@ -6,7 +6,7 @@ migrações versionadas.
 
 ## Resumo da entrega
 
-- API implementada em NestJS com os endpoints pedidos no desafio.
+- API implementada em NestJS com os endpoints solicitados no desafio.
 - Documentação interativa em Swagger/OpenAPI em `/docs`.
 - Banco local SQLite controlado por Prisma e migração versionada.
 - Testes unitários e e2e cobrindo os fluxos principais da API.
@@ -514,5 +514,4 @@ complementada por mensageria, como MQTT, RabbitMQ ou Kafka, para lidar melhor
 com volume, resiliência e processamento assíncrono.
 
 Também não foram implementados Kubernetes e deploy em nuvem. O projeto inclui
-Docker e Docker Compose para garantir um ambiente local reprodutível, mas o
-deploy em cluster faz parte do Nível 2 do desafio.
+Docker e Docker Compose para garantir um ambiente local reprodutível.
