@@ -38,6 +38,7 @@ Windows PowerShell:
 ```powershell
 $env:DATABASE_URL="file:../data/minisense.sqlite"
 npm run db:init
+npm run db:seed
 npm run start:dev
 ```
 
@@ -46,6 +47,7 @@ Em bash/zsh:
 ```bash
 export DATABASE_URL="file:../data/minisense.sqlite"
 npm run db:init
+npm run db:seed
 npm run start:dev
 ```
 
@@ -83,6 +85,34 @@ data/minisense.sqlite
 
 Um exemplo de variável de ambiente também está em `.env.example`.
 
+## Docker
+
+Também é possível subir a API com Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+O Compose sobe dois serviços:
+
+- `database`: prepara o volume SQLite com `prisma db push` e executa
+  `npm run db:seed`.
+- `api`: expõe a API em `http://localhost:3000` usando o banco preparado no
+  volume compartilhado.
+
+Documentação Swagger no ambiente Docker:
+
+```text
+http://localhost:3000/docs
+```
+
+Para recriar a base do zero:
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
 ## Build e testes
 
 ```bash
@@ -91,6 +121,22 @@ npm run lint:check
 npm run test
 npm run test:e2e
 ```
+
+### Cobertura dos testes
+
+Os testes focam nos comportamentos essenciais do desafio:
+
+- Criação de dispositivo.
+- Criação de stream.
+- Publicação de medição.
+- Consulta de dispositivo com as 5 medições mais recentes por stream.
+- Consulta de stream com todas as medições.
+- Erro quando dispositivo, stream, usuário ou unidade de medida não existem.
+- Erros de validação para payloads inválidos.
+- Execução do seed demo via `npm run db:seed`.
+
+Os testes unitários ficam nos services e os testes e2e usam Supertest para
+validar os contratos HTTP reais da API.
 
 ## CI
 
@@ -109,6 +155,7 @@ Scripts Prisma:
 npm run prisma:generate
 npm run prisma:migrate
 npm run prisma:deploy
+npm run prisma:seed
 npm run prisma:studio
 ```
 
@@ -120,7 +167,8 @@ Migrate esteja funcionando normalmente.
 
 ## Seed inicial
 
-Na inicialização, a aplicação cria via upsert:
+Na inicialização, a aplicação cria via upsert os dados mínimos para a API
+funcionar:
 
 - Usuário padrão: `id = 1`, `name = Default User`
 - Unidades de medida:
@@ -129,6 +177,28 @@ Na inicialização, a aplicação cria via upsert:
   - `3`: `hPa` - Hectopascal
   - `4`: `lux` - Lux
   - `5`: `%` - Porcentagem
+
+Para carregar uma base demo completa, rode:
+
+```bash
+npm run db:seed
+```
+
+O comando também está disponível como:
+
+```bash
+npm run prisma:seed
+npx prisma db seed
+```
+
+O seed demo cria:
+
+- 1 usuário demo.
+- 5 unidades de medida.
+- 2 dispositivos sensores.
+- 5 streams distribuídas entre os dispositivos.
+- 22 medições, incluindo streams com mais de 5 leituras para validar a regra de
+  medições recentes.
 
 ## Estrutura do projeto
 
@@ -141,7 +211,7 @@ src/
   prisma/                 PrismaService e seed inicial
   modules/
     measurement-units/    GET /measurement-units
-    sensor-devices/       cadastro e consulta de dispositivos
+    sensor-devices/       cadastro e consulta de dispositivos sensores
     data-streams/         cadastro de streams e publicação de medições
 ```
 
@@ -160,12 +230,23 @@ interfaces, tokens e mappers extras que não trazem ganho real para este desafio
 | Método | Rota | Descrição |
 | --- | --- | --- |
 | `GET` | `/measurement-units` | Consulta as unidades de medida fixas. |
-| `GET` | `/users/:userId/devices` | Consulta os dispositivos de um usuário. |
-| `GET` | `/devices/:deviceKey` | Consulta um dispositivo por key, incluindo as 5 medições mais recentes de cada stream. |
-| `GET` | `/streams/:streamKey` | Consulta uma stream por key, incluindo todas as suas medições. |
-| `POST` | `/users/:userId/devices` | Registra um dispositivo para um usuário. |
-| `POST` | `/devices/:deviceKey/streams` | Registra uma stream para um dispositivo. |
-| `POST` | `/streams/:streamKey/measurements` | Publica uma medição em uma stream. |
+| `GET` | `/sensor-devices` | Consulta os dispositivos do usuário padrão. |
+| `GET` | `/sensor-devices/:deviceKey` | Consulta um dispositivo por key, incluindo as 5 medições mais recentes de cada stream. |
+| `GET` | `/data-streams/:streamKey` | Consulta uma stream por key, incluindo todas as suas medições. |
+| `POST` | `/sensor-devices` | Registra um dispositivo para o usuário padrão. |
+| `POST` | `/sensor-devices/:deviceKey/streams` | Registra uma stream para um dispositivo. |
+| `POST` | `/data-streams/:streamKey/measurements` | Publica uma medição em uma stream. |
+
+Aliases compatíveis:
+
+| Método | Rota | Descrição |
+| --- | --- | --- |
+| `GET` | `/users/:userId/devices` | Consulta os dispositivos de um usuário específico. |
+| `GET` | `/devices/:deviceKey` | Alias de `/sensor-devices/:deviceKey`. |
+| `GET` | `/streams/:streamKey` | Alias de `/data-streams/:streamKey`. |
+| `POST` | `/users/:userId/devices` | Registra um dispositivo para um usuário específico. |
+| `POST` | `/devices/:deviceKey/streams` | Alias de `/sensor-devices/:deviceKey/streams`. |
+| `POST` | `/streams/:streamKey/measurements` | Alias de `/data-streams/:streamKey/measurements`. |
 
 ### Consultar unidades de medida
 
@@ -188,7 +269,7 @@ Resposta:
 ### Consultar dispositivos de um usuário
 
 ```http
-GET /users/1/devices
+GET /sensor-devices
 ```
 
 Resposta:
@@ -217,7 +298,7 @@ Resposta:
 ### Registrar dispositivo
 
 ```http
-POST /users/1/devices
+POST /sensor-devices
 Content-Type: application/json
 ```
 
@@ -244,7 +325,7 @@ Resposta:
 ### Consultar dispositivo por key
 
 ```http
-GET /devices/{deviceKey}
+GET /sensor-devices/{deviceKey}
 ```
 
 A consulta individual retorna as 5 medições mais recentes de cada stream.
@@ -277,7 +358,7 @@ Resposta:
 ### Registrar stream em um dispositivo
 
 ```http
-POST /devices/{deviceKey}/streams
+POST /sensor-devices/{deviceKey}/streams
 Content-Type: application/json
 ```
 
@@ -306,7 +387,7 @@ Resposta:
 ### Consultar dados de uma stream
 
 ```http
-GET /streams/{streamKey}
+GET /data-streams/{streamKey}
 ```
 
 Retorna todas as medições da stream, ordenadas da mais recente para a mais
@@ -332,7 +413,7 @@ Resposta:
 ### Publicar medição em uma stream
 
 ```http
-POST /streams/{streamKey}/measurements
+POST /data-streams/{streamKey}/measurements
 Content-Type: application/json
 ```
 
@@ -371,13 +452,14 @@ Entidades principais:
 
 Decisões de implementação:
 
-- O usuário é informado por rota (`/users/:userId/devices`) porque o desafio não
-  exige autenticação.
+- As rotas principais usam o usuário padrão `id = 1`, criado pela seed, porque o
+  desafio não exige autenticação. As rotas com `/users/:userId/devices` foram
+  mantidas como aliases para consultas por usuário específico.
 - O schema relacional fica em `prisma/schema.prisma`.
 - A migração inicial fica em `prisma/migrations/20260610000000_init`.
 - `measurementCount` é calculado via `_count` do Prisma.
-- `GET /devices/:deviceKey` limita as medições por stream a 5 itens.
-- `GET /streams/:streamKey` retorna todas as medições da stream.
+- `GET /sensor-devices/:deviceKey` limita as medições por stream a 5 itens.
+- `GET /data-streams/:streamKey` retorna todas as medições da stream.
 - Validação de payloads usa `ValidationPipe` global com `whitelist` e
   `forbidNonWhitelisted`.
 
@@ -389,5 +471,48 @@ Decisões de implementação:
 - Repositories isolam consultas Prisma e formatam os objetos de resposta.
 - DTOs de entrada usam `class-validator`; DTOs de saída documentam o contrato no
   Swagger.
+- `PrismaExceptionFilter` converte erros do Prisma para respostas HTTP limpas,
+  sem expor detalhes internos do banco.
 - `DatabaseSeedService` cria o usuário padrão e as unidades de medida fixas na
   inicialização.
+
+## Tratamento de erros
+
+A API retorna erros em formato consistente:
+
+```json
+{
+  "statusCode": 404,
+  "message": "Dispositivo sensor não encontrado"
+}
+```
+
+Payloads inválidos retornam `400` com uma lista de mensagens do
+`class-validator`:
+
+```json
+{
+  "statusCode": 400,
+  "message": ["label should not be empty", "unitId must be an integer number"]
+}
+```
+
+As validações cobrem campos obrigatórios, tipos numéricos de `unitId`,
+`timestamp` e `value`, existência de unidade de medida, device key e stream key.
+
+## Escopo não implementado
+
+Autenticação não foi implementada porque a especificação da API não define fluxo
+de login, JWT ou refresh token. Para manter o escopo fiel ao desafio, foi
+utilizado um usuário padrão criado via seed. A modelagem, porém, mantém a
+entidade `User` e o relacionamento com `SensorDevice`, então a API pode evoluir
+para autenticação real sem refazer o domínio.
+
+A publicação de medições foi implementada via endpoint REST, conforme o desafio.
+Em um cenário real de IoT, essa entrada poderia ser substituída ou
+complementada por mensageria, como MQTT, RabbitMQ ou Kafka, para lidar melhor
+com volume, resiliência e processamento assíncrono.
+
+Também não foram implementados Kubernetes e deploy em nuvem. O projeto inclui
+Docker e Docker Compose para garantir um ambiente local reprodutível, mas o
+deploy em cluster faz parte do Nível 2 do desafio.
