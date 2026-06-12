@@ -1,0 +1,28 @@
+services:
+  database:
+    build: .
+    environment:
+      DATABASE_URL: file:../data/minisense.sqlite
+    volumes:
+      - minisense-data:/app/data
+    command: >
+      sh -c "npx prisma db push --schema prisma/schema.prisma
+      && npm run db:seed"
+    restart: "no"
+
+  api:
+    build: .
+    depends_on:
+      database:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: file:../data/minisense.sqlite
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - minisense-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  minisense-data:
