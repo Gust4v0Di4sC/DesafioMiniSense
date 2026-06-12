@@ -14,9 +14,9 @@ class ApiRootResponseDto {
   @ApiProperty({
     example: [
       '/measurement-units',
-      '/users/1/devices',
-      '/devices/{deviceKey}',
-      '/streams/{streamKey}',
+      '/sensor-devices',
+      '/sensor-devices/{deviceKey}',
+      '/data-streams/{streamKey}',
     ],
   })
   endpoints: string[];
@@ -34,9 +34,9 @@ export class AppController {
       docs: '/docs',
       endpoints: [
         '/measurement-units',
-        '/users/1/devices',
-        '/devices/{deviceKey}',
-        '/streams/{streamKey}',
+        '/sensor-devices',
+        '/sensor-devices/{deviceKey}',
+        '/data-streams/{streamKey}',
       ],
     };
   }
