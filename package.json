@@ -10,14 +10,16 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "postinstall": "prisma generate",
     "db:init": "prisma db execute --file prisma/migrations/20260610000000_init/migration.sql --schema prisma/schema.prisma",
+    "db:seed": "ts-node prisma/seed.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
+    "prisma:seed": "npm run db:seed",
     "prisma:studio": "prisma studio",
     "start": "node scripts/start.js",
     "start:dev": "node scripts/start.js dev",
     "start:debug": "node scripts/start.js dev --debug",
-    "start:prod": "node dist/main",
+    "start:prod": "node dist/src/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint:check": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
@@ -80,5 +82,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
